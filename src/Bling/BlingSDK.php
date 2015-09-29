@@ -347,7 +347,7 @@ class BlingSDK{
         $inicialTag = '<'.$context.' />';
 
         // CRIA O CABEÇALHO DO XML
-        $xml = new SimpleXMLElement("<?xml version='1.0' encoding='".$encoding."' ?>".$inicialTag);
+        $xml = new \SimpleXMLElement("<?xml version='1.0' encoding='".$encoding."' ?>".$inicialTag);
 
         		// ITERA CADA ELEMENTO DA ARRAY PARA CRIAÇÃO DOS NÓS DO XML
                 foreach($array as $key1 => $value1){
