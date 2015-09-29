@@ -1,5 +1,7 @@
 <?php
 
+namespace Bling;
+
 /**
  * @name BlingSDK
  * @internal Classe para integração com a API V2 Bling
