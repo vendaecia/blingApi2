@@ -1,0 +1,13 @@
+{
+    "name": "rorteg/blingsdk",
+    "description": "PHP Bling API2 SDK",
+    "type": "git",
+    "license": "GNU",
+    "authors": [
+        {
+            "name": "Davi Crystal",
+            "email": "davicrystal@gmail.com"
+        }
+    ],
+    "require": {}
+}
