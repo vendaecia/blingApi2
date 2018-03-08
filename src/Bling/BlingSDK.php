@@ -13,6 +13,24 @@ namespace Bling;
 class BlingSDK{
 
 	/**
+	 * @name $debug
+	 * @param boolean
+	 * @internal Ativa/desativa o modo de debug
+	 * @access public
+	 */
+
+	public $debug = false;
+
+	/**
+	 * @name $log_file
+	 * @param string
+	 * @internal Define o caminho para salvar registros de log
+	 * @access public
+	 */
+
+	public $log_file;
+
+	/**
 	 * @name $strBlingUrl
 	 * @param string
 	 * @internal Define a URL de integração com o Bling
@@ -313,40 +331,40 @@ class BlingSDK{
 		// INICIA O CURL
 		$curl_handle = curl_init();
 	
-			// SE A REQUISIÇÃO TRATAR-SE DE UM GET DE CONSULTA, PREPARA AS OPÇÕES DA URL
-			if($strAction == 'get'){
+		// SE A REQUISIÇÃO TRATAR-SE DE UM GET DE CONSULTA, PREPARA AS OPÇÕES DA URL
+		if($strAction == 'get'){
 
-					// SE O PARÂMETRO FOR INFORMADO COMO STRING O INCLUI NA AÇÃO ENVIADA AO BLING
-					if(is_string($arrayData) && $arrayData)
-						$strOptions = '/' . $arrayData . '/' . $strResponseFormat . '&apikey=' . $this->strApiKey;
-					else 
-						$strOptions = '/' . $strResponseFormat . '&apikey=' . $this->strApiKey;
-			
-			// SE A REQUISIÇÃO TRATAR-SE DE UM POST PREPARA AS OPÇÕES DA URL
-			}elseif($strAction == 'post'){
-
-				// SE A REQUISIÇÃO TEM COMO ORIGEM UM POST PREPARA OS DADOS PARA ENVIO
-				curl_setopt($curl_handle, CURLOPT_POST, count($arrayData));
-	    		curl_setopt($curl_handle, CURLOPT_POSTFIELDS, $arrayData);
-
-				// SE O PARÂMETRO $arrayData FOR INFORMADO SIGINIFICA QUE HÁ UM CÓDIGO DE PRODUTO
-				// E A URL PARA O POST DEVE INCLUIR O CÓDIGO DO MESMO
-				if($strItemCode)
-					$strOptions = '/' . $strItemCode;
-				// SE O PARÂMETRO $arrayData FOR IGNORADA SIGNIFICA QUE'TRATA-SE DE UM POST DE CRIAÇÃO DE PRODUTO
-				// By @RafaelCruz: Fix para setar o formato de resposta também para requisicoes POST
+				// SE O PARÂMETRO FOR INFORMADO COMO STRING O INCLUI NA AÇÃO ENVIADA AO BLING
+				if(is_string($arrayData) && $arrayData)
+					$strOptions = '/' . $arrayData . '/' . $strResponseFormat . '&apikey=' . $this->strApiKey;
 				else 
-					$strOptions = ($strResponseFormat) ? '/' . $strResponseFormat : NULL;
+					$strOptions = '/' . $strResponseFormat . '&apikey=' . $this->strApiKey;
+		
+		// SE A REQUISIÇÃO TRATAR-SE DE UM POST PREPARA AS OPÇÕES DA URL
+		}elseif($strAction == 'post'){
 
-			// SE A REQUISIÇÃO TRATAR-SE DE UM DELETE PREPARA AS OPÇÕES DA URL
-			}elseif($strAction == 'delete'){
+			// SE A REQUISIÇÃO TEM COMO ORIGEM UM POST PREPARA OS DADOS PARA ENVIO
+			curl_setopt($curl_handle, CURLOPT_POST, count($arrayData));
+    		curl_setopt($curl_handle, CURLOPT_POSTFIELDS, $arrayData);
 
-				$strOptions = '/' . $arrayData . '/' . $strResponseFormat;
+			// SE O PARÂMETRO $arrayData FOR INFORMADO SIGINIFICA QUE HÁ UM CÓDIGO DE PRODUTO
+			// E A URL PARA O POST DEVE INCLUIR O CÓDIGO DO MESMO
+			if($strItemCode)
+				$strOptions = '/' . $strItemCode;
+			// SE O PARÂMETRO $arrayData FOR IGNORADA SIGNIFICA QUE'TRATA-SE DE UM POST DE CRIAÇÃO DE PRODUTO
+			// By @RafaelCruz: Fix para setar o formato de resposta também para requisicoes POST
+			else 
+				$strOptions = ($strResponseFormat) ? '/' . $strResponseFormat : NULL;
 
-				curl_setopt($curl_handle, CURLOPT_CUSTOMREQUEST, 'DELETE');
-    			curl_setopt($curl_handle, CURLOPT_POSTFIELDS, array('apikey'=>$this->strApiKey));
+		// SE A REQUISIÇÃO TRATAR-SE DE UM DELETE PREPARA AS OPÇÕES DA URL
+		}elseif($strAction == 'delete'){
 
-			}
+			$strOptions = '/' . $arrayData . '/' . $strResponseFormat;
+
+			curl_setopt($curl_handle, CURLOPT_CUSTOMREQUEST, 'DELETE');
+			curl_setopt($curl_handle, CURLOPT_POSTFIELDS, array('apikey'=>$this->strApiKey));
+
+		}
 
 		// DEFINE A URL DE AÇÃO
 		curl_setopt($curl_handle, CURLOPT_URL, $this->strBlingUrl . '/'. $strContext . $strOptions);
@@ -356,6 +374,21 @@ class BlingSDK{
 
 	    // EXECUTA O ENVIO
 	    $response = curl_exec($curl_handle);
+	    
+	     // LOG
+	    if($this->debug){
+		    $log = strtoupper($strAction) . ' ' . $this->strBlingUrl . '/'. $strContext . $strOptions;
+
+		    if($arrayData){
+		    	$log .= "\r\n> Data:\r\n" . urldecode(print_r($arrayData, true));
+		    }
+
+			$log .= "\r\n> Error:\r\n" . curl_error($curl_handle);
+			
+			$log .= "\r\n> Response:\r\n" . $response;
+
+		    $this->log($log);
+	    }
 
 	    // FECHA A CONEXÃO
 	    curl_close($curl_handle);
@@ -385,27 +418,27 @@ class BlingSDK{
         // CRIA O CABEÇALHO DO XML
         $xml = new \SimpleXMLElement("<?xml version='1.0' encoding='".$encoding."' ?>".$inicialTag);
 
-        		// ITERA CADA ELEMENTO DA ARRAY PARA CRIAÇÃO DOS NÓS DO XML
-                foreach($array as $key1 => $value1){
+		// ITERA CADA ELEMENTO DA ARRAY PARA CRIAÇÃO DOS NÓS DO XML
+        foreach($array as $key1 => $value1){
 
-                		// SE O VALOR FOR UMA NOVA ARRAY OU OBJETO, CHAMA A FUNÇÃO PARA CRIAÇÃO DE NÓS
-                		// ABAIXO DO NÓ ATUAL
-                        if(is_array($value1) || is_object($value1)){
+    		// SE O VALOR FOR UMA NOVA ARRAY OU OBJETO, CHAMA A FUNÇÃO PARA CRIAÇÃO DE NÓS
+    		// ABAIXO DO NÓ ATUAL
+            if(is_array($value1) || is_object($value1)){
 
-	                        	// CASO A CHAVE NÃO SEJA UM NÚMERO DA ARRAY ADICIONA O NOVO NÓ
-			                	if(!is_numeric($key1))
-			                		$newNode = $xml->addChild($key1);
-			                	else // CASO A CHAVE SEJA UM NÚMERO DA ARRAY DEFINE C NOVO NÓ COMO O NÓ PAI
-			                		$newNode = $xml;
+            	// CASO A CHAVE NÃO SEJA UM NÚMERO DA ARRAY ADICIONA O NOVO NÓ
+            	if(!is_numeric($key1))
+            		$newNode = $xml->addChild($key1);
+            	else // CASO A CHAVE SEJA UM NÚMERO DA ARRAY DEFINE C NOVO NÓ COMO O NÓ PAI
+            		$newNode = $xml;
 
-			                // ADICIONA O NOVO NÓ FILHO
-                			$this->constructXmlNode($value1,$newNode);
+                // ADICIONA O NOVO NÓ FILHO
+    			$this->constructXmlNode($value1,$newNode);
 
-                		// CASO O VALOR EXISTA E SEJA UM STRING, CRIA UM UM NOVO NÓ NO XML, EXISTEM VALORES DEFINIDOS COMO "0"
-                        } elseif($value1 != "") 
-                            $xml->addChild($key1,  html_entity_decode($value1));
+    		// CASO O VALOR EXISTA E SEJA UM STRING, CRIA UM UM NOVO NÓ NO XML, EXISTEM VALORES DEFINIDOS COMO "0"
+            } elseif($value1 != "") 
+                $xml->addChild($key1,  html_entity_decode($value1));
 
-                }
+        }
 
         // RETORNA O XML
         return $xml->asXML();
@@ -423,27 +456,27 @@ class BlingSDK{
 
     private function constructXmlNode($array, $node){
 
-	    	// ITERA CADA ITEM DA ARRAY RECEBIDA
-	        foreach ($array as $key => $value){
+    	// ITERA CADA ITEM DA ARRAY RECEBIDA
+        foreach ($array as $key => $value){
 
-	   				// SE O VALOR FOR UMA NOVA ARRAY OU OBJETO, CHAMA A FUNÇÃO PARA CRIAÇÃO DE NÓS
-	                // ABAIXO DO NÓ ATUAL
-	                if(is_array($value) || is_object($value)){
+			// SE O VALOR FOR UMA NOVA ARRAY OU OBJETO, CHAMA A FUNÇÃO PARA CRIAÇÃO DE NÓS
+            // ABAIXO DO NÓ ATUAL
+            if(is_array($value) || is_object($value)){
 
-	                		// CASO A CHAVE NÃO SEJA UM NÚMERO DA ARRAY ADICIONA O NOVO NÓ
-		                	if(!is_numeric($key))
-		                		$newNode = $node->addChild($key);
-		                	else // CASO A CHAVE SEJA UM NÚMERO DA ARRAY DEFINE C NOVO NÓ COMO O NÓ PAI
-		                		$newNode = $node;
+            		// CASO A CHAVE NÃO SEJA UM NÚMERO DA ARRAY ADICIONA O NOVO NÓ
+                	if(!is_numeric($key))
+                		$newNode = $node->addChild($key);
+                	else // CASO A CHAVE SEJA UM NÚMERO DA ARRAY DEFINE C NOVO NÓ COMO O NÓ PAI
+                		$newNode = $node;
 
-		                // INICIA A CONSTRUÇÃO DE UM NOVO NÓ FILHO
-                		$this->constructXmlNode($value,$newNode);
+                // INICIA A CONSTRUÇÃO DE UM NOVO NÓ FILHO
+        		$this->constructXmlNode($value,$newNode);
 
-                	// CASO O VALOR EXISTA E SEJA UM STRING, CRIA UM UM NOVO NÓ NO XML, EXISTEM VALORES DEFINIDOS COMO "0"
-			        }elseif($value != "")
-	                    $node->addChild($key, htmlspecialchars($value));
-	                                
-	        }
+        	// CASO O VALOR EXISTA E SEJA UM STRING, CRIA UM UM NOVO NÓ NO XML, EXISTEM VALORES DEFINIDOS COMO "0"
+	        }elseif($value != "")
+                $node->addChild($key, htmlspecialchars($value));
+                                
+        }
 
     }
 
@@ -482,6 +515,26 @@ class BlingSDK{
 		return $maskared;
 
 
+	}
+
+	/**
+    * @name log
+    * @access protected
+    * @internal Escreve em arquivo de log
+    * @author Rafael Cruz
+    * @param string $log
+    * @return boolean
+    */
+
+	protected function log($log){
+		if(!empty($this->log_file)){
+			$log = "\r\n\r\n" . date('Y-m-d H:i:s') . "\r\n" . $log;
+	        $h = fopen($this->log_file, 'a+');
+	        fwrite($h, print_r($log, true));
+	        fclose($h);
+	        return true;
+		}
+		return false;
 	}
 
 
