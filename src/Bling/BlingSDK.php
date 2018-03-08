@@ -187,6 +187,40 @@ class BlingSDK{
 
 	}
 
+	 /**
+     * @name postNfService
+     * @access public
+     * @internal Gera uma Nota de Servico no ERP Bling
+     * @author Rafael Cruz
+     * @param array $arrayPreData
+     * @return string | json
+     */
+
+    public function postNfService($arrayPreData){
+
+        // DEFINE O CONTEXTO DO ENVIO
+        $strContext = 'notaservico/json';
+
+        // LIMPA CARACTERES DESNECESSÁRIOS NA STRING CNPJ PARA CLIENTE
+        if(isset($arrayPreData['pedido']['cliente']['cnpj']))
+            $arrayPreData['pedido']['cliente']['cnpj'] = str_replace(array('.','-','/'), '', $arrayPreData['pedido']['cliente']['cnpj']);
+
+        // LIMPA CARACTERES DESNECESSÁRIOS NA STRING PARA INSCRIÇÃO ESTADUAL PARA CLIENTE
+        if(isset($arrayPreData['pedido']['cliente']['ie']))
+            $arrayPreData['pedido']['cliente']['ie'] = str_replace(array('.','-','/'), '', $arrayPreData['pedido']['cliente']['ie']);
+
+        // LIMPA CARACTERES DESNECESSÁRIOS NA STRING CEP PARA CLIENTE
+        if(isset($arrayPreData['pedido']['cliente']['cep']))
+            $arrayPreData['pedido']['cliente']['cep'] = $this->mask($arrayPreData['pedido']['cliente']['cep'], '##.###-###');
+
+
+        // GERA A ARRAY PADRÃO PARA API 2 BLING
+        $arrayData = array("apikey"=>$this->strApiKey, "xml" => rawurlencode($this->buildXml($arrayPreData, $strContext)));
+
+        // EXECUTA O ENVIO DE DADOS PARA O BLING
+        return $this->sendDataToBling($strContext, 'post', $arrayData, NULL);
+    }
+
 	/**
 	 * @name getProduct
 	 * @access public
