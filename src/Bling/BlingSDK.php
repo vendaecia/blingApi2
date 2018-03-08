@@ -199,7 +199,7 @@ class BlingSDK{
     public function postNfService($arrayPreData){
 
         // DEFINE O CONTEXTO DO ENVIO
-        $strContext = 'notaservico/json';
+        $strContext = 'notaservico';
 
         // LIMPA CARACTERES DESNECESSÁRIOS NA STRING CNPJ PARA CLIENTE
         if(isset($arrayPreData['pedido']['cliente']['cnpj']))
@@ -218,7 +218,7 @@ class BlingSDK{
         $arrayData = array("apikey"=>$this->strApiKey, "xml" => rawurlencode($this->buildXml($arrayPreData, $strContext)));
 
         // EXECUTA O ENVIO DE DADOS PARA O BLING
-        return $this->sendDataToBling($strContext, 'post', $arrayData, NULL);
+        return $this->sendDataToBling($strContext, 'post', $arrayData, 'json');
     }
 
 	/**
@@ -333,8 +333,10 @@ class BlingSDK{
 				// E A URL PARA O POST DEVE INCLUIR O CÓDIGO DO MESMO
 				if($strItemCode)
 					$strOptions = '/' . $strItemCode;
-				else // SE O PARÂMETRO $arrayData FOR IGNORADA SIGNIFICA QUE'TRATA-SE DE UM POST DE CRIAÇÃO DE PRODUTO
-					$strOptions = NULL;
+				// SE O PARÂMETRO $arrayData FOR IGNORADA SIGNIFICA QUE'TRATA-SE DE UM POST DE CRIAÇÃO DE PRODUTO
+				// By @RafaelCruz: Fix para setar o formato de resposta também para requisicoes POST
+				else 
+					$strOptions = ($strResponseFormat) ? '/' . $strResponseFormat : NULL;
 
 			// SE A REQUISIÇÃO TRATAR-SE DE UM DELETE PREPARA AS OPÇÕES DA URL
 			}elseif($strAction == 'delete'){
