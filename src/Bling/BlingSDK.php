@@ -375,7 +375,7 @@ class BlingSDK{
 	    // EXECUTA O ENVIO
 	    $response = curl_exec($curl_handle);
 	    
-	     // LOG
+	    // LOG
 	    if($this->debug){
 		    $log = strtoupper($strAction) . ' ' . $this->strBlingUrl . '/'. $strContext . $strOptions;
 
@@ -410,13 +410,18 @@ class BlingSDK{
     private function buildXml($array = array(NULL), $context){
 
     	// DEFINE O PARÂMETRO PARA ENCODING
-        $encoding = 'UTF8';
-
-        // DEFINE O PARÂMETRO PARA O CONTEXTO DA REQUISIÇÃO
-        $inicialTag = '<'.$context.' />';
+        $encoding = 'UTF-8';
 
         // CRIA O CABEÇALHO DO XML
-        $xml = new \SimpleXMLElement("<?xml version='1.0' encoding='".$encoding."' ?>".$inicialTag);
+        if($array){
+        	$array_keys = array_keys($array);
+        	if(count($array_keys) == 1){
+        		$xml = new \SimpleXMLElement("<?xml version='1.0' encoding='".$encoding."' ?><".$array_keys[0]." />");
+        		$array = $array[$array_keys[0]];
+        	}else{
+        		$xml = new \SimpleXMLElement("<?xml version='1.0' encoding='".$encoding."' ?><".$context." />");
+        	}
+        }
 
 		// ITERA CADA ELEMENTO DA ARRAY PARA CRIAÇÃO DOS NÓS DO XML
         foreach($array as $key1 => $value1){
