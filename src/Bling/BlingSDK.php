@@ -240,7 +240,7 @@ class BlingSDK{
     }
 
     /**
-     * @name emitNfService
+     * @name sendNfService
      * @access public
      * @internal Emite uma Nota de Servico no ERP Bling
      * @author Rafael Cruz
@@ -248,7 +248,7 @@ class BlingSDK{
      * @return string | json
      */
 
-    public function emitNfService($rps_number, $serie){
+    public function sendNfService($rps_number, $serie){
 
         // DEFINE O CONTEXTO DO ENVIO
         $strContext = 'notaservico';
