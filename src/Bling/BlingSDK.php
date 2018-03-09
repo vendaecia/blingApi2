@@ -239,6 +239,27 @@ class BlingSDK{
         return $this->sendDataToBling($strContext, 'post', $arrayData, 'json');
     }
 
+    /**
+     * @name emitNfService
+     * @access public
+     * @internal Emite uma Nota de Servico no ERP Bling
+     * @author Rafael Cruz
+     * @param int $rps_number, int $serie
+     * @return string | json
+     */
+
+    public function emitNfService($rps_number, $serie){
+
+        // DEFINE O CONTEXTO DO ENVIO
+        $strContext = 'notaservico';
+
+        // GERA A ARRAY PADRÃO PARA API 2 BLING
+        $arrayData = array("apikey" => $this->strApiKey, "number" => $rps_number, "serie" => $serie);
+
+        // EXECUTA O ENVIO DE DADOS PARA O BLING
+        return $this->sendDataToBling($strContext, 'post', $arrayData, 'json');
+    }
+
 	/**
 	 * @name getProduct
 	 * @access public
