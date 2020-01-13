@@ -319,6 +319,23 @@ class BlingSDK{
 	}
 
 	/**
+	 * @name getCategories
+	 * @access public
+	 * @internal Consulta categorias no ERP Bling
+	 * @author Geilson Andrade
+	 * @param string $strProductCode
+	 * @param string $responseFormat (json|xml)
+	 * @return string (json|xml)
+	 */
+
+	public function getCategories($strProductCode = NULL, $responseFormat = 'xml'){
+
+		// EXECUTA O ENVIO DE DADOS PARA O BLING
+	    return $this->sendDataToBling('categorias', 'get', $strProductCode, $responseFormat);
+
+	}
+
+	/**
 	 * @name deleteProduct
 	 * @access public
 	 * @internal Deleta um produto no ERP Bling
