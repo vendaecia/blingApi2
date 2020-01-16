@@ -81,7 +81,7 @@ class BlingSDK{
 	    $arrayData = array("apikey"=>$this->strApiKey, "xml" => rawurlencode($this->buildXml($arrayPreData, $strContext)));
 
 	    // EXECUTA O ENVIO DE DADOS PARA O BLING
-	    return $this->sendDataToBling($strContext, 'post', $arrayData, NULL, $strProductCode);
+	    return $this->sendDataToBling($strContext, 'post', $arrayData, 'json', $strProductCode);
 
 	}
 
@@ -273,8 +273,11 @@ class BlingSDK{
 	public function getProduct($strProductCode = NULL, $responseFormat = 'xml'){
 
 		// EXECUTA O ENVIO DE DADOS PARA O BLING
-	    return $this->sendDataToBling('produto', 'get', $strProductCode, $responseFormat);
-
+		if ($strProductCode) {
+			return $this->sendDataToBling('produto', 'get', $strProductCode, $responseFormat);
+		} else {
+			return $this->sendDataToBling('produtos', 'get', $strProductCode, $responseFormat);
+		}
 	}
 
 	/**
