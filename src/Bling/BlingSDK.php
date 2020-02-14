@@ -134,7 +134,7 @@ class BlingSDK{
 	    $arrayData = array("apikey"=>$this->strApiKey, "xml" => rawurlencode($this->buildXml($arrayPreData, $strContext)), "gerarnfe" => $boolGerarNfe);
 
 	    // EXECUTA O ENVIO DE DADOS PARA O BLING
-	    return $this->sendDataToBling($strContext, 'post', $arrayData, NULL);
+	    return $this->sendDataToBling($strContext, 'post', $arrayData, 'json');
 
 	}
 
