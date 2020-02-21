@@ -293,7 +293,11 @@ class BlingSDK{
 	public function getOrder($strOrderCode = NULL, $responseFormat = 'xml'){
 
 		// EXECUTA O ENVIO DE DADOS PARA O BLING
-	    return $this->sendDataToBling('pedido', 'get', $strOrderCode, $responseFormat);
+		if ($strOrderCode) {
+			return $this->sendDataToBling('pedido', 'get', $strOrderCode, $responseFormat);
+		} else {
+			return $this->sendDataToBling('pedidos', 'get', $strOrderCode, $responseFormat);
+		}
 
 	}
 
