@@ -290,13 +290,13 @@ class BlingSDK{
 	 * @return string (json|xml)
 	 */
 
-	public function getOrder($strOrderCode = NULL, $responseFormat = 'xml'){
+	public function getOrder($strOrderCode = NULL, $responseFormat = 'xml', $strFilters = ''){
 
 		// EXECUTA O ENVIO DE DADOS PARA O BLING
 		if ($strOrderCode) {
 			return $this->sendDataToBling('pedido', 'get', $strOrderCode, $responseFormat);
 		} else {
-			return $this->sendDataToBling('pedidos', 'get', $strOrderCode, $responseFormat);
+			return $this->sendDataToBling('pedidos', 'get', $strOrderCode, $responseFormat, NULL, $strFilters);
 		}
 
 	}
@@ -371,20 +371,22 @@ class BlingSDK{
     * @return string
     */
 
-	private function sendDataToBling($strContext, $strAction, $arrayData = NULL, $strResponseFormat = NULL, $strItemCode = NULL){
+	private function sendDataToBling($strContext, $strAction, $arrayData = NULL, $strResponseFormat = NULL, $strItemCode = NULL, $strFilters = ''){
 
 		// INICIA O CURL
 		$curl_handle = curl_init();
 	
 		// SE A REQUISIÇÃO TRATAR-SE DE UM GET DE CONSULTA, PREPARA AS OPÇÕES DA URL
 		if($strAction == 'get'){
+			if ($strFilters)
+				$strFilters = '&filters=' . $strFilters;
 
-				// SE O PARÂMETRO FOR INFORMADO COMO STRING O INCLUI NA AÇÃO ENVIADA AO BLING
-				if(is_string($arrayData) && $arrayData)
-					$strOptions = '/' . $arrayData . '/' . $strResponseFormat . '&apikey=' . $this->strApiKey;
-				else 
-					$strOptions = '/' . $strResponseFormat . '&apikey=' . $this->strApiKey;
-		
+			// SE O PARÂMETRO FOR INFORMADO COMO STRING O INCLUI NA AÇÃO ENVIADA AO BLING
+			if(is_string($arrayData) && $arrayData)
+				$strOptions = '/' . $arrayData . '/' . $strResponseFormat . '&apikey=' . $this->strApiKey . $strFilters;
+			else 
+				$strOptions = '/' . $strResponseFormat . '&apikey=' . $this->strApiKey . $strFilters;
+
 		// SE A REQUISIÇÃO TRATAR-SE DE UM POST PREPARA AS OPÇÕES DA URL
 		}elseif($strAction == 'post'){
 
