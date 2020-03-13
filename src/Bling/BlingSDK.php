@@ -201,7 +201,7 @@ class BlingSDK{
 	    $arrayData = array("apikey"=>$this->strApiKey, "xml" => rawurlencode($this->buildXml($arrayPreData, $strContext)));
 
 	    // EXECUTA O ENVIO DE DADOS PARA O BLING
-	    return $this->sendDataToBling($strContext, 'post', $arrayData, NULL);
+	    return $this->sendDataToBling($strContext, 'post', $arrayData, 'json');
 
 	}
 
@@ -255,6 +255,27 @@ class BlingSDK{
 
         // GERA A ARRAY PADRÃO PARA API 2 BLING
         $arrayData = array("apikey" => $this->strApiKey, "number" => $rps_number, "serie" => $serie);
+
+        // EXECUTA O ENVIO DE DADOS PARA O BLING
+        return $this->sendDataToBling($strContext, 'post', $arrayData, 'json');
+	}
+	
+	/**
+     * @name sendNfProduct
+     * @access public
+     * @internal Emite Nota Fiscal no ERP Bling
+     * @author Geilson Andrade
+     * @param int $number, int $serie
+     * @return string | json
+     */
+
+    public function sendNfProduct($number, $serie){
+
+        // DEFINE O CONTEXTO DO ENVIO
+        $strContext = 'notafiscal';
+
+        // GERA A ARRAY PADRÃO PARA API 2 BLING
+        $arrayData = array("apikey" => $this->strApiKey, "number" => $number, "serie" => $serie);
 
         // EXECUTA O ENVIO DE DADOS PARA O BLING
         return $this->sendDataToBling($strContext, 'post', $arrayData, 'json');
