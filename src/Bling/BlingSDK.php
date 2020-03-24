@@ -421,8 +421,7 @@ class BlingSDK{
 				$strOptions = '/' . $strItemCode;
 			// SE O PARÂMETRO $arrayData FOR IGNORADA SIGNIFICA QUE'TRATA-SE DE UM POST DE CRIAÇÃO DE PRODUTO
 			// By @RafaelCruz: Fix para setar o formato de resposta também para requisicoes POST
-			else 
-				$strOptions = ($strResponseFormat) ? '/' . $strResponseFormat : NULL;
+			$strOptions = ($strResponseFormat) ? '/' . $strResponseFormat : NULL;
 
 		// SE A REQUISIÇÃO TRATAR-SE DE UM DELETE PREPARA AS OPÇÕES DA URL
 		}elseif($strAction == 'delete'){
