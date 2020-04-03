@@ -291,14 +291,16 @@ class BlingSDK{
 	 * @return string (json|xml)
 	 */
 
-	public function getProduct($strProductCode = NULL, $responseFormat = 'xml'){
+	public function getProduct($strProductCode = NULL, $responseFormat = 'xml', $arrayParams = array()){
 
 		// EXECUTA O ENVIO DE DADOS PARA O BLING
 		if ($strProductCode) {
-			return $this->sendDataToBling('produto', 'get', $strProductCode, $responseFormat);
+			$context = 'produto';
 		} else {
-			return $this->sendDataToBling('produtos', 'get', $strProductCode, $responseFormat);
+			$context = 'produtos';
 		}
+
+		return $this->sendDataToBling($context, 'get', $strProductCode, $responseFormat, NULL, $arrayParams);
 	}
 
 	/**
@@ -311,14 +313,16 @@ class BlingSDK{
 	 * @return string (json|xml)
 	 */
 
-	public function getOrder($strOrderCode = NULL, $responseFormat = 'xml', $strFilters = ''){
+	public function getOrder($strOrderCode = NULL, $responseFormat = 'xml', $arrayParams = array()){
 
 		// EXECUTA O ENVIO DE DADOS PARA O BLING
 		if ($strOrderCode) {
-			return $this->sendDataToBling('pedido', 'get', $strOrderCode, $responseFormat);
+			$context = 'pedido';
 		} else {
-			return $this->sendDataToBling('pedidos', 'get', $strOrderCode, $responseFormat, NULL, $strFilters);
+			$context = 'pedidos';
 		}
+
+		return $this->sendDataToBling($context, 'get', $strOrderCode, $responseFormat, NULL, $arrayParams);
 
 	}
 
@@ -392,21 +396,25 @@ class BlingSDK{
     * @return string
     */
 
-	private function sendDataToBling($strContext, $strAction, $arrayData = NULL, $strResponseFormat = NULL, $strItemCode = NULL, $strFilters = ''){
+	private function sendDataToBling($strContext, $strAction, $arrayData = NULL, $strResponseFormat = NULL, $strItemCode = NULL, $arrayParams = array()){
 
 		// INICIA O CURL
 		$curl_handle = curl_init();
 	
 		// SE A REQUISIÇÃO TRATAR-SE DE UM GET DE CONSULTA, PREPARA AS OPÇÕES DA URL
 		if($strAction == 'get'){
-			if ($strFilters)
-				$strFilters = '&filters=' . $strFilters;
+			$params = '';
+			if (is_array($arrayParams)) {
+				foreach ($arrayParams as $k_param => $v_param) {
+					$params .= '&' . $k_param . '=' . $v_param;
+				}
+			}
 
 			// SE O PARÂMETRO FOR INFORMADO COMO STRING O INCLUI NA AÇÃO ENVIADA AO BLING
 			if(is_string($arrayData) && $arrayData)
-				$strOptions = '/' . $arrayData . '/' . $strResponseFormat . '&apikey=' . $this->strApiKey . $strFilters;
+				$strOptions = '/' . $arrayData . '/' . $strResponseFormat . '&apikey=' . $this->strApiKey . $params;
 			else 
-				$strOptions = '/' . $strResponseFormat . '&apikey=' . $this->strApiKey . $strFilters;
+				$strOptions = '/' . $strResponseFormat . '&apikey=' . $this->strApiKey . $params;
 
 		// SE A REQUISIÇÃO TRATAR-SE DE UM POST PREPARA AS OPÇÕES DA URL
 		}elseif($strAction == 'post'){
