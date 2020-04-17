@@ -351,6 +351,23 @@ class BlingSDK{
 	}
 
 	/**
+	 * @name getDeposits
+	 * @access public
+	 * @internal Consulta depósitos no ERP Bling
+	 * @author Geilson Andrade
+	 * @param string $strProductCode
+	 * @param string $responseFormat (json|xml)
+	 * @return string (json|xml)
+	 */
+
+	public function getDeposits($strProductCode = NULL, $responseFormat = 'xml'){
+
+		// EXECUTA O ENVIO DE DADOS PARA O BLING
+	    return $this->sendDataToBling('depositos', 'get', $strProductCode, $responseFormat);
+
+	}
+
+	/**
 	 * @name getCategories
 	 * @access public
 	 * @internal Consulta categorias no ERP Bling
