@@ -360,10 +360,10 @@ class BlingSDK{
 	 * @return string (json|xml)
 	 */
 
-	public function getDeposits($strProductCode = NULL, $responseFormat = 'xml'){
+	public function getDeposits($strProductCode = NULL, $responseFormat = 'xml', $arrayParams = array()){
 
 		// EXECUTA O ENVIO DE DADOS PARA O BLING
-	    return $this->sendDataToBling('depositos', 'get', $strProductCode, $responseFormat);
+	    return $this->sendDataToBling('depositos', 'get', $strProductCode, $responseFormat, NULL, $arrayParams);
 
 	}
 
