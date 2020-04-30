@@ -239,6 +239,28 @@ class BlingSDK{
         return $this->sendDataToBling($strContext, 'post', $arrayData, 'json');
     }
 
+  	/**
+	 * @name putOrder
+	 * @access public
+	 * @internal Atualiza status de um pedido no ERP Bling
+	 * @author Geilson Andrade
+	 * @param array $arrayPreData
+	 * @param int $strOrderNumber
+	 * @return string | json
+	 */
+
+	public function putOrder($arrayPreData, $strOrderNumber){
+
+		// DEFINE O CONTEXTO DO ENVIO
+		$strContext = 'pedido';
+
+		// GERA A ARRAY PADRÃO PARA API 2 BLING
+	    $arrayData = array("apikey"=>$this->strApiKey, "xml" => rawurlencode($this->buildXml($arrayPreData, $strContext)));
+
+	    // EXECUTA O ENVIO DE DADOS PARA O BLING
+	    return $this->sendDataToBling($strContext, 'put', $arrayData, 'json', $strOrderNumber);
+	}
+
     /**
      * @name sendNfService
      * @access public
@@ -449,6 +471,16 @@ class BlingSDK{
 			// SE O PARÂMETRO $arrayData FOR IGNORADA SIGNIFICA QUE'TRATA-SE DE UM POST DE CRIAÇÃO DE PRODUTO
 			// By @RafaelCruz: Fix para setar o formato de resposta também para requisicoes POST
 			$strOptions .= ($strResponseFormat) ? '/' . $strResponseFormat : NULL;
+
+		// SE A REQUISIÇÃO TRATAR-SE DE UM PUT PREPARA AS OPÇÕES DA URL
+		}elseif($strAction == 'put'){
+
+			// SE A REQUISIÇÃO TEM COMO ORIGEM UM PUT PREPARA OS DADOS PARA ENVIO
+			curl_setopt($curl_handle, CURLOPT_CUSTOMREQUEST, 'PUT');
+    		curl_setopt($curl_handle, CURLOPT_POST, count($arrayData));
+    		curl_setopt($curl_handle, CURLOPT_POSTFIELDS, $arrayData);
+
+			$strOptions = '/' . $strItemCode . (($strResponseFormat) ? '/' . $strResponseFormat : NULL);
 
 		// SE A REQUISIÇÃO TRATAR-SE DE UM DELETE PREPARA AS OPÇÕES DA URL
 		}elseif($strAction == 'delete'){
