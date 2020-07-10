@@ -313,7 +313,7 @@ class BlingSDK{
 	 * @return string (json|xml)
 	 */
 
-	public function getProduct($strProductCode = NULL, $responseFormat = 'xml', $arrayParams = array()){
+	public function getProduct($strProductCode = NULL, $responseFormat = 'xml', $arrayParams = array(), $page = NULL){
 
 		// EXECUTA O ENVIO DE DADOS PARA O BLING
 		if ($strProductCode) {
@@ -322,7 +322,7 @@ class BlingSDK{
 			$context = 'produtos';
 		}
 
-		return $this->sendDataToBling($context, 'get', $strProductCode, $responseFormat, NULL, $arrayParams);
+		return $this->sendDataToBling($context, 'get', $strProductCode, $responseFormat, NULL, $arrayParams, $page);
 	}
 
 	/**
@@ -435,7 +435,7 @@ class BlingSDK{
     * @return string
     */
 
-	private function sendDataToBling($strContext, $strAction, $arrayData = NULL, $strResponseFormat = NULL, $strItemCode = NULL, $arrayParams = array()){
+	private function sendDataToBling($strContext, $strAction, $arrayData = NULL, $strResponseFormat = NULL, $strItemCode = NULL, $arrayParams = array(), $page = NULL){
 
 		// INICIA O CURL
 		$curl_handle = curl_init();
@@ -453,7 +453,7 @@ class BlingSDK{
 			if(is_string($arrayData) && $arrayData)
 				$strOptions = '/' . $arrayData . '/' . $strResponseFormat . '&apikey=' . $this->strApiKey . $params;
 			else 
-				$strOptions = '/' . $strResponseFormat . '&apikey=' . $this->strApiKey . $params;
+				$strOptions = (is_int($page) ? '/page=' . $page : '') . '/' . $strResponseFormat . '&apikey=' . $this->strApiKey . $params;
 
 		// SE A REQUISIÇÃO TRATAR-SE DE UM POST PREPARA AS OPÇÕES DA URL
 		}elseif($strAction == 'post'){
